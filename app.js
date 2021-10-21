@@ -103,7 +103,10 @@ app.delete('/api/v1/profile', (req, res) => {
     res.send('profile deleted')
 })
 
-
+app.get("/**", (req, res, next) => {
+    res.sendFile(path.join(__dirname, "./web/build/index.html"))
+    // res.redirect("/")
+})
 
 mongoose.connection.on("connected", () => console.log("Database Connected..."))
 mongoose.connection.on("error", (error) => console.log(`Error${error.message}`))

@@ -1,6 +1,7 @@
 import React from "react";
 import Signup from "./component/Signup"
 import Login from "./component/Login"
+import Dashboard from "./component/Dashboard"
 import {
 
   Switch,
@@ -29,6 +30,10 @@ function App() {
 
         <Route path="/login">
           <Login />
+        </Route>
+
+        <Route path="/profile">
+          <Dashboard/>
         </Route>
 
         <Route exact path="/">
