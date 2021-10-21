@@ -30,7 +30,7 @@ app.use('/', express.static(path.join(__dirname, '/web/build')))
 
 
 
-app.post('/api/v1/login', async (req, res) => {
+app.post('/api/v1/login',(req, res) => {
     try {
         if (!req.body.email ||
             !req.body.password
@@ -43,7 +43,7 @@ app.post('/api/v1/login', async (req, res) => {
             // console.log("req.body: ", req.body);
 
 
-            UsersModel.findOne({ email: req.body.email }, (err, user) => {
+            UsersModel.findOne({ email: req.body.email }, async (err, user) => {
                 if (user) {
                    const match = await bcrypt.compare(req.body.password , user.password)
                    if(match){
@@ -52,7 +52,7 @@ app.post('/api/v1/login', async (req, res) => {
                         res.status(400).send(`Entered password is incorrect`)
                    }
                 } else {
-                    res.status(500).send(`No user is found with this email ${err.message}`)
+                    res.status(500).send(`No user is found with this email`)
                 }
                 
              
@@ -62,22 +62,24 @@ app.post('/api/v1/login', async (req, res) => {
         res.status(500).send("Something went wrong");
     }
 
-})
+});
 
 
-app.post("api/v1/registration", async (req, res) => {
+app.post('/api/v1/registration', async (req, res) =>{
     try {
-        // const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
         let newUser = {
             name: req.body.name,
             email: req.body.email,
             password: hashedPassword
-        };
+        }
         UsersModel.findOne({ email: newUser.email }, (error, user) => {
             if (user) {
-                return res.status(400).send("User already registered.");
-            } else {
+                return res.status(400).send(`User already registered. `);
+            }else if (error){
+                return res.status(400).send(`${error.message}`);
+            
+            }else {
                 UsersModel.create(newUser, (error, data) => {
                     if (error) {
                         throw error;
